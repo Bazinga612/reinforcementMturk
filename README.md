@@ -4,5 +4,6 @@ Refinforcement Learning for dialog generation on Mechanical Turk data, with the 
 ##Progress
 * Sample code to read and write to a SQLite dataset (Done)
 * Repairing the comma separate issue in CSV file (Done)
+
 To do:
 * Write a script to generate the SQL script by reading the CSV file
