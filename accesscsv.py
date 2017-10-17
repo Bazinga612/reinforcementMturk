@@ -7,20 +7,20 @@ class csvprocessing:
 		self.c = conn.cursor()
 		self.labels=None
 		self.commands=[]
+		self.dialogacts=[]
 
 	def initialize_database(self):
 		#initialize table 'dialog_acts'
 		self.commands.append("CREATE TABLE dialog_acts (dialog_act_id int NOT NULL PRIMARY KEY, dialog_act symbol text)")
 		self.commands.append("CREATE TABLE starter (starter_id int NOT NULL PRIMARY KEY, utterance text)")
-		self.commands.append("CREATE TABLE mappings (mapping_id int NOT NULL PRIMARY KEY, starter_id int, dialog_act1_id int, dialog_act2_id int, dialog_act3_id int, dialog_act4_id int)")
-		self.commands.append("CREATE TABLE diakog_act1 (dialog_act1_id int NOT NULL PRIMARY KEY, utterance text, name_act1 int)")
-		self.commands.append("CREATE TABLE diakog_act2 (dialog_act2_id int NOT NULL PRIMARY KEY, utterance text, name_act2 int)")
-		self.commands.append("CREATE TABLE diakog_act3 (dialog_act3_id int NOT NULL PRIMARY KEY, utterance text, name_act3 int)")
-		self.commands.append("CREATE TABLE diakog_act4 (dialog_act4_id int NOT NULL PRIMARY KEY, utterance text, name_act4 int)")
+		self.commands.append("CREATE TABLE mappings (mapping_id int NOT NULL PRIMARY KEY, starter_id int, dialog_act1_id int, dialog_act2_id int, dialog_act3_id int, dialog_act4_id int, FOREIGN KEY(starter_id) REFERENCES starter(starter_id), FOREIGN KEY(dialog_act1_id) REFERENCES dialog_act1(dialog_act1_id), FOREIGN KEY(dialog_act2_id) REFERENCES dialog_act2(dialog_act2_id), FOREIGN KEY(dialog_act3_id) REFERENCES dialog_act3(dialog_act3_id), FOREIGN KEY(dialog_act4_id) REFERENCES dialog_act1(dialog_act4_id))")
+		self.commands.append("CREATE TABLE diakog_act1 (dialog_act1_id int NOT NULL PRIMARY KEY, utterance text, name_act1 int, FOREIGN KEY(name_act1) REFERENCES dialog_acts(dialog_act_id))")
+		self.commands.append("CREATE TABLE diakog_act2 (dialog_act2_id int NOT NULL PRIMARY KEY, utterance text, name_act2 int, FOREIGN KEY(name_act2) REFERENCES dialog_acts(dialog_act_id))")
+		self.commands.append("CREATE TABLE diakog_act3 (dialog_act3_id int NOT NULL PRIMARY KEY, utterance text, name_act3 int, FOREIGN KEY(name_act3) REFERENCES dialog_acts(dialog_act_id))")
+		self.commands.append("CREATE TABLE diakog_act4 (dialog_act4_id int NOT NULL PRIMARY KEY, utterance text, name_act4 int, FOREIGN KEY(name_act4) REFERENCES dialog_acts(dialog_act_id))")
 
-	def properprint(self,arx):
-		for j in range(len(arx)):
-			print(j,arx[j])
+	def prcessrow(self,arx):
+		
 
 	def processcsv(self):
 		with open('tv_movie_combined.csv', 'r') as csvfile:
