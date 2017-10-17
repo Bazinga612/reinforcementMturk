@@ -145,17 +145,23 @@ class csvprocessing:
 		for key in self.dialogacts.keys():
 			commandx = "INSERT INTO dialog_acts VALUES ("
 			commandx += str(self.dialogacts[key])
-			commandx += ", "
+			commandx += ", \""
 			commandx += key
-			commandx += ");"
+			commandx += "\");"
 			self.dialogact_commands.append(commandx)		
 
 		for key in self.starters.keys():
 			commandx = "INSERT INTO starter VALUES ("
 			commandx += str(self.starters[key])
-			commandx += ", "
+			if ord(key[0])!=34:
+				commandx += ", \""
+			else:
+				commandx += ", "
 			commandx += key
-			commandx += ");"
+			if ord(key[-1])!=34:
+				commandx += "\") "
+			else:
+				commandx += ") "
 			self.starter_commands.append(commandx)
 
 		for key in self.dialogacts1.keys():
