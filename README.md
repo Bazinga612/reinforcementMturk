@@ -12,6 +12,6 @@ To do:
 
 Alternative
 * Create an ORM model in SQLAlchemy-(Done)
-	->Creates database locally in SQLite
-	->Reads Python script to read and write to database using ORM
+	* Creates database locally in SQLite
+	* Reads Python script to read and write to database using ORM
  
