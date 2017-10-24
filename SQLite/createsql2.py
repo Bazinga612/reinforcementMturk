@@ -12,13 +12,43 @@ class csvprocessing:
 		self.slot2_commands=[]
 		self.slot3_commands=[]
 		self.slot4_commands=[]
+		self.slot5_commands=[]
 		self.dialogacts={}
 		self.starters={}
 		self.slots1={}
 		self.slots2={}
 		self.slots3={}
 		self.slots4={}
-		self.counter={'starter':0,'da':0,'da1':0,'da1':0,'da2':0,'da3':0,'da4':0,'mapping_no':0}
+		self.slots5={}
+		self.counter={'starter':0,'da':0,'da1':0,'da1':0,'da2':0,'da3':0,'da4':0,'da5':0,'mapping_no':0}
+		self.files=['tv_movie_combined.csv','Combined_General_long.csv','Combined_General_short.csv']
+
+	def mainprocess(self):
+		self.initialize_database()
+		for fname in self.files:
+			print("sent",fname,"for processing!")
+			self.processcsv(fname)
+		self.createalltables()
+		self.writeallcommands()
+
+	def processcsv(self,fname):
+		with open('../datasets/' + fname, 'r') as csvfile:
+			spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+			k,lmt=0,0
+
+			for row in spamreader:
+				rowx=self.combinefunc(row)
+				if k==0:
+					self.labels=rowx
+					k+=1
+					continue;	
+				#print(len(rowx),rowx)
+				#self.properprint(rowx)
+				k+=1
+				self.processrow(rowx)
+				#if k==lmt:
+				#	break;
+			#print("Labels",self.labels)		
 
 	def initialize_database(self):
 		#initialize table 'dialog_acts'
@@ -29,8 +59,10 @@ class csvprocessing:
 		self.commands.append("CREATE TABLE slot2 (slot2_id int NOT NULL PRIMARY KEY, utterance2 text, name_act2 int, FOREIGN KEY(name_act2) REFERENCES dialog_acts(dialog_act_id));")
 		self.commands.append("CREATE TABLE slot3 (slot3_id int NOT NULL PRIMARY KEY, utterance3 text, name_act3 int, FOREIGN KEY(name_act3) REFERENCES dialog_acts(dialog_act_id));")
 		self.commands.append("CREATE TABLE slot4 (slot4_id int NOT NULL PRIMARY KEY, utterance4 text, name_act4 int, FOREIGN KEY(name_act4) REFERENCES dialog_acts(dialog_act_id));")
+		self.commands.append("CREATE TABLE slot5 (slot5_id int NOT NULL PRIMARY KEY, utterance5 text, name_act5 int, FOREIGN KEY(name_act5) REFERENCES dialog_acts(dialog_act_id));")
 
 	def processrow(self,arx):
+		#print(arx)
 		#dialog_act_1 	
 		if len(arx[0])!=0:
 			if self.dialogacts.get(arx[0],-1)==-1:
@@ -71,56 +103,76 @@ class csvprocessing:
 				da4id=self.dialogacts[arx[3]]
 		else:
 			da4id=None
+		#dialog_act_5
+		if len(arx[4])!=0:
+			if self.dialogacts.get(arx[4],-1)==-1:
+				self.dialogacts[arx[4]]=self.counter['da']
+				da4id=self.counter['da']
+				self.counter['da']+=1
+			else:
+				da5id=self.dialogacts[arx[4]]
+		else:
+			da5id=None
 		#slot0 or starter
-		if len(arx[12])!=0:
-			if self.starters.get(arx[12],-1)==-1:
-				self.starters[arx[12]]=self.counter['starter']
+		if len(arx[5])!=0:
+			if self.starters.get(arx[5],-1)==-1:
+				self.starters[arx[5]]=self.counter['starter']
 				starterid=self.counter['starter']
 				self.counter['starter']+=1
 			else:
-				starterid=self.starters[arx[12]]
+				starterid=self.starters[arx[5]]
 		else:
 			starterid=None
 		#slot1
 		if da1id!=None:
-			if self.slots1.get(arx[13],-1)==-1:
-				self.slots1[arx[13]]=(self.counter['da1'],da1id)
+			if self.slots1.get(arx[6],-1)==-1:
+				self.slots1[arx[6]]=(self.counter['da1'],da1id)
 				slot1id=self.counter['da1']
 				self.counter['da1']+=1
 			else:
-				slot1id=self.slots1[arx[13]][0]
+				slot1id=self.slots1[arx[6]][0]
 		else:
 			slot1id=None
 		#slot2
 		if da2id!=None:
-			if self.slots2.get(arx[14],-1)==-1:
-				self.slots2[arx[14]]=(self.counter['da2'],da2id)
+			if self.slots2.get(arx[7],-1)==-1:
+				self.slots2[arx[7]]=(self.counter['da2'],da2id)
 				slot2id=self.counter['da2']
 				self.counter['da2']+=1
 			else:
-				slot2id=self.slots2[arx[14]][0]
+				slot2id=self.slots2[arx[7]][0]
 		else:
 			slot2id=None
 		#slot3
 		if da3id!=None:
-			if self.slots3.get(arx[15],-1)==-1:
-				self.slots3[arx[15]]=(self.counter['da3'],da3id)
+			if self.slots3.get(arx[8],-1)==-1:
+				self.slots3[arx[8]]=(self.counter['da3'],da3id)
 				slot3id=self.counter['da3']
 				self.counter['da3']+=1
 			else:
-				slot3id=self.slots3[arx[15]][0]
+				slot3id=self.slots3[arx[8]][0]
 		else:
 			slot3id=None
 		#slot4
 		if da4id!=None:
-			if self.slots4.get(arx[16],-1)==-1:
-				self.slots4[arx[16]]=(self.counter['da4'],da4id)
+			if self.slots4.get(arx[9],-1)==-1:
+				self.slots4[arx[9]]=(self.counter['da4'],da4id)
 				slot4id=self.counter['da4']
 				self.counter['da4']+=1
 			else:
-				slot4id=self.slots4[arx[16]][0]
+				slot4id=self.slots4[arx[9]][0]
 		else:
 			slot4id=None
+		#slot4
+		if da5id!=None:
+			if self.slots5.get(arx[10],-1)==-1:
+				self.slots5[arx[10]]=(self.counter['da5'],da4id)
+				slot5id=self.counter['da5']
+				self.counter['da5']+=1
+			else:
+				slot5id=self.slots5[arx[10]][0]
+		else:
+			slot5id=None			
 		commandx = "INSERT INTO mappings VALUES ("
 		commandx += str(self.counter['mapping_no'])			#adding mappingid
 		commandx +=", "
@@ -145,6 +197,11 @@ class csvprocessing:
 			commandx+='NULL'
 		else:
 			commandx += str(slot4id)
+		commandx += ");"
+		if slot5id==None:
+			commandx+='NULL'
+		else:
+			commandx += str(slot5id)
 		commandx += ");"
 		#print(commandx)
 		#print("da1234id",da1id,da2id,da3id,da4id)
@@ -175,6 +232,8 @@ class csvprocessing:
 			self.starter_commands.append(commandx)
 
 		for key in self.slots1.keys():
+			if key=='':
+				continue;
 			retrieved=self.slots1[key]
 			did1=retrieved[0]
 			dactid=retrieved[1]
@@ -250,6 +309,24 @@ class csvprocessing:
 			commandx += ");"
 			self.slot4_commands.append(commandx)
 
+		for key in self.slots5.keys():
+			retrieved=self.slots5[key]
+			did1=retrieved[0]
+			dactid=retrieved[1]
+			commandx = "INSERT INTO slot5 VALUES ("
+			commandx += str(did1)
+			if ord(key[0])!=34:
+				commandx += ", \""
+			else:
+				commandx += ", "
+			commandx += key
+			if ord(key[-1])!=34:
+				commandx += "\", "
+			else:
+				commandx += ", "
+			commandx += str(dactid)
+			commandx += ");"
+			self.slot5_commands.append(commandx)
 
 	def writeallcommands(self):
 		ofile=open("commands.sql",'w')
@@ -282,31 +359,13 @@ class csvprocessing:
 		for comx in self.slot4_commands:
 			ofile.write(comx+'\n')
 
+		ofile.write("\n\n#slot5 table commands\n")
+		for comx in self.slot5_commands:
+			ofile.write(comx+'\n')
+
 		ofile.write("\n\n#Mapping commands\n")
 		for comx in self.mapping_commands:
 			ofile.write(comx+'\n')
-
-	def processcsv(self):
-		with open('tv_movie_combined.csv', 'r') as csvfile:
-			spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
-			k,lmt=0,0
-
-			for row in spamreader:
-				rowx=self.combinefunc(row)
-				if k==0:
-					self.labels=rowx
-					k+=1
-					continue;	
-				#print(len(rowx),rowx)
-				#self.properprint(rowx)
-				k+=1
-				self.processrow(rowx)
-				#if k==lmt:
-				#	break;
-			#print("Labels",self.labels)
-		self.initialize_database()
-		self.createalltables()
-		self.writeallcommands()
 
 
 	def combinefunc(self,arr):
@@ -336,4 +395,4 @@ class csvprocessing:
 		return arr		
 
 csvp = csvprocessing()
-csvp.processcsv()
+csvp.mainprocess()
