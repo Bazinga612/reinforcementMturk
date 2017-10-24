@@ -54,7 +54,7 @@ class csvprocessing:
 		#initialize table 'dialog_acts'
 		self.commands.append("CREATE TABLE dialog_acts (dialog_act_id int NOT NULL PRIMARY KEY, dialog_act text);")
 		self.commands.append("CREATE TABLE starter (starter_id int NOT NULL PRIMARY KEY, utterance text);")
-		self.commands.append("CREATE TABLE mappings (mapping_id int NOT NULL PRIMARY KEY, starter_id int, slot1_id int, slot2_id int, slot3_id int, slot4_id int, FOREIGN KEY(starter_id) REFERENCES starter(starter_id), FOREIGN KEY(slot1_id) REFERENCES slot1(slot1_id), FOREIGN KEY(slot2_id) REFERENCES slot2(slot2_id), FOREIGN KEY(slot3_id) REFERENCES slot3(slot3_id), FOREIGN KEY(slot4_id) REFERENCES slot4(slot4_id));")
+		self.commands.append("CREATE TABLE mappings (mapping_id int NOT NULL PRIMARY KEY, starter_id int, slot1_id int, slot2_id int, slot3_id int, slot4_id int, slot5_id int FOREIGN KEY(starter_id) REFERENCES starter(starter_id), FOREIGN KEY(slot1_id) REFERENCES slot1(slot1_id), FOREIGN KEY(slot2_id) REFERENCES slot2(slot2_id), FOREIGN KEY(slot3_id) REFERENCES slot3(slot3_id), FOREIGN KEY(slot4_id) REFERENCES slot4(slot4_id)), FOREIGN KEY(slot5_id) REFERENCES slot5(slot5_id);")
 		self.commands.append("CREATE TABLE slot1 (slot1_id int NOT NULL PRIMARY KEY, utterance1 text, name_act1 int, FOREIGN KEY(name_act1) REFERENCES dialog_acts(dialog_act_id));")
 		self.commands.append("CREATE TABLE slot2 (slot2_id int NOT NULL PRIMARY KEY, utterance2 text, name_act2 int, FOREIGN KEY(name_act2) REFERENCES dialog_acts(dialog_act_id));")
 		self.commands.append("CREATE TABLE slot3 (slot3_id int NOT NULL PRIMARY KEY, utterance3 text, name_act3 int, FOREIGN KEY(name_act3) REFERENCES dialog_acts(dialog_act_id));")
@@ -197,7 +197,7 @@ class csvprocessing:
 			commandx+='NULL'
 		else:
 			commandx += str(slot4id)
-		commandx += ");"
+		commandx += ", "
 		if slot5id==None:
 			commandx+='NULL'
 		else:
